@@ -87,11 +87,11 @@ def regression_imputation(df, target_column):
 
 # Function to normalize data
 def normalize_data(df, method):
-    if method == "Min-Max":
+    if method == "Min-Max normalization":
         num_cols = df.select_dtypes(include=['float64', 'int64']).columns
         scaler = MinMaxScaler()
         df[num_cols] = scaler.fit_transform(df[num_cols])
-    elif method == "Z-Score":
+    elif method == "Z-score standardization":
         num_cols = df.select_dtypes(include=['float64', 'int64']).columns
         scaler = StandardScaler()
         df[num_cols] = scaler.fit_transform(df[num_cols])
