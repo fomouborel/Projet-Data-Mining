@@ -3,13 +3,17 @@ import pandas as pd
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
 
 # Title of the application
 st.title('CSV File Analyzer')
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-steps = ["Upload Data and Describe", "Process and Clean the Data"]
+steps = ["Upload Data and Describe", "Process and Clean the Data", "Clustering and Prediction"]
 step = st.sidebar.radio("Go to", steps)
 
 # Function to display a statistical summary
@@ -100,7 +104,7 @@ def normalize_data(df, method):
 # Function to allow users to choose the method for handling missing values
 def choose_missing_value_method(data):
     qualitative_cols = data.select_dtypes(include=['object', 'category']).columns.tolist()
-    quantitative_cols = data.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    quantitative_cols = data.select_dtypes(include=(['int64', 'float64'])).columns.tolist()
 
     st.write("### Methods for Handling Missing Values")
 
@@ -121,6 +125,37 @@ def choose_missing_value_method(data):
         data = handle_missing_values(data, quant_method, quantitative_cols)
 
     return data
+
+# Function to plot clusters
+def plot_clusters(data, labels, algorithm, centers=None):
+    pca = PCA(n_components=2)
+    components = pca.fit_transform(data)
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(components[:, 0], components[:, 1], c=labels, cmap='viridis', s=50, alpha=0.6)
+    if centers is not None:
+        centers_pca = pca.transform(centers)
+        plt.scatter(centers_pca[:, 0], centers_pca[:, 1], c='red', s=200, alpha=0.75, marker='X')
+    plt.title(f'Clusters found by {algorithm}')
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.colorbar()
+    st.pyplot(plt)
+
+# Function to plot the elbow method
+def plot_elbow(data):
+    sse = []
+    k_range = range(1, 11)
+    for k in k_range:
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(data)
+        sse.append(kmeans.inertia_)
+    plt.figure(figsize=(10, 5))
+    plt.plot(k_range, sse, 'bo-')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Sum of Squared Errors (SSE)')
+    plt.title('Elbow Method for Optimal k')
+    st.pyplot(plt)
 
 # Loading and displaying the CSV file if uploaded
 if 'data' not in st.session_state:
@@ -174,5 +209,65 @@ elif step == "Process and Clean the Data":
 
         st.header('Summary of Data')
         display_summary(data)
+
+elif step == "Clustering and Prediction":
+    if st.session_state.data is not None:
+        data = st.session_state.data
+        
+        # Select only numeric columns for clustering
+        numeric_data = data.select_dtypes(include=['int64', 'float64'])
+
+        st.header('Clustering')
+        clustering_algorithm = st.selectbox(
+            'Choose a clustering algorithm',
+            ['K-means', 'DB-SCAN']
+        )
+        if clustering_algorithm == 'K-means':
+            st.subheader('Elbow Method for Optimal k')
+            plot_elbow(numeric_data)
+            n_clusters = st.number_input('Number of clusters', min_value=2, max_value=10, value=3)
+            kmeans = KMeans(n_clusters=n_clusters)
+            labels = kmeans.fit_predict(numeric_data)
+            st.write(f'Cluster centers: {kmeans.cluster_centers_}')
+            plot_clusters(numeric_data, labels, 'K-means', kmeans.cluster_centers_)
+        elif clustering_algorithm == 'DB-SCAN':
+            eps = st.number_input('Epsilon (eps)', min_value=0.1, max_value=10.0, value=0.5)
+            min_samples = st.number_input('Minimum samples', min_value=1, max_value=20, value=5)
+            dbscan = DBSCAN(eps=eps, min_samples=min_samples)
+            labels = dbscan.fit_predict(numeric_data)
+            plot_clusters(numeric_data, labels, 'DB-SCAN')
+
+        st.header('Prediction')
+        target_column = st.selectbox('Choose the target column', data.columns)
+        st.write(f'Target column selected: {target_column}')
+        
+        if st.button('Run Linear Regression'):
+            # Prepare the data for regression
+            X = data.drop(columns=[target_column]).select_dtypes(include=['int64', 'float64'])
+            y = data[target_column]
+            
+            # Handle any remaining missing values in X and y
+            X = SimpleImputer(strategy='mean').fit_transform(X)
+            y = SimpleImputer(strategy='mean').fit_transform(y.values.reshape(-1, 1)).ravel()
+            
+            # Run linear regression
+            model = LinearRegression()
+            model.fit(X, y)
+            y_pred = model.predict(X)
+            
+            # Display regression results
+            st.write('### Regression Results')
+            st.write(f'R^2 Score: {model.score(X, y):.2f}')
+            st.write(f'Coefficients: {model.coef_}')
+            st.write(f'Intercept: {model.intercept_}')
+            
+            # Plot actual vs predicted values
+            plt.figure(figsize=(10, 6))
+            plt.scatter(y, y_pred, alpha=0.3)
+            plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)
+            plt.xlabel('Actual')
+            plt.ylabel('Predicted')
+            plt.title('Actual vs Predicted Values')
+            st.pyplot(plt)
     else:
-        st.info("Please upload a CSV file first.")
+        st.info("Please upload and process a CSV file first.")
