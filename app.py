@@ -88,7 +88,7 @@ def choose_missing_value_method(data):
     st.write("#### Variables qualitatives")
     qual_method = st.selectbox(
         'Choisissez une méthode pour les variables qualitatives',
-        ['Aucune', 'Delete columns', 'Replace with mode']
+        ['Aucune', 'Replace with mode']
     )
     if qual_method != 'Aucune':
         data = handle_missing_values(data, qual_method, qualitative_cols)
@@ -96,7 +96,7 @@ def choose_missing_value_method(data):
     st.write("#### Variables quantitatives")
     quant_method = st.selectbox(
         'Choisissez une méthode pour les variables quantitatives',
-        ['Aucune', 'Delete columns', 'Replace with mean', 'Replace with median', 'KNN imputation']
+        ['Aucune', 'Replace with mean', 'Replace with median', 'KNN imputation']
     )
     if quant_method != 'Aucune':
         data = handle_missing_values(data, quant_method, quantitative_cols)
