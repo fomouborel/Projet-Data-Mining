@@ -46,16 +46,13 @@ The project contains the following parts:
 - NumPy
 
 
-### Acknowledgements
 
-    Special thanks to Issam Falih for their guidance and support.
-    Thanks to all the team members for their hard work and collaboration.
   
-### Installation
+**Installation**
    Clone the repository:
    ```bash
    git clone https://github.com/yourusername/data-mining-project.git
-   cd data-mining-project
+   cd data-mining-project```
 
 ### Installation
   python -m venv env
@@ -69,4 +66,9 @@ The project contains the following parts:
    2.Load your dataset in CSV format using the provided file uploader
    3.Follow the on-screen instructions to explore, clean, and visualize your data.
    4.Choose and apply clustering or prediction algorithms as needed.
+
+**Acknowledgements**
+
+    Special thanks to Issam Falih for their guidance and support.
+    Thanks to all the team members for their hard work and collaboration.
 
