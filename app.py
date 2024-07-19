@@ -201,21 +201,24 @@ def plot_dimension_reduction(data, target_column):
         X = data[num_cols].dropna()
         y = data[target_column]
 
-        # Discretize target for LDA if necessary
-        y_discretized = pd.qcut(y, q=3, labels=False)
+        # Ensure target is numeric
+        if not pd.api.types.is_numeric_dtype(y):
+            st.error("Target column must be numeric for dimension reduction.")
+            return
+
 
         pca = PCA(n_components=2)
-        lda = LinearDiscriminantAnalysis(n_components=2)
+
         mds = MDS(n_components=2)
         lle = LocallyLinearEmbedding(n_components=2)
 
         X_pca = pca.fit_transform(X)
-        X_lda = lda.fit_transform(X, y_discretized)
+
         X_mds = mds.fit_transform(X)
         X_lle = lle.fit_transform(X)
 
         st.session_state.X_pca = X_pca
-        st.session_state.X_lda = X_lda
+
         st.session_state.X_mds = X_mds
         st.session_state.X_lle = X_lle
 
@@ -224,8 +227,6 @@ def plot_dimension_reduction(data, target_column):
         scatter = axs[0, 0].scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis', s=50)
         axs[0, 0].set_title('PCA')
 
-        scatter = axs[0, 1].scatter(X_lda[:, 0], X_lda[:, 1], c=y_discretized, cmap='viridis', s=50)
-        axs[0, 1].set_title('LDA')
 
         scatter = axs[1, 0].scatter(X_mds[:, 0], X_mds[:, 1], c=y, cmap='viridis', s=50)
         axs[1, 0].set_title('MDS')
@@ -238,7 +239,6 @@ def plot_dimension_reduction(data, target_column):
         st.pyplot(fig)
     else:
         st.error("Not enough numerical columns for dimension reduction.")
-
 # Function to plot clusters
 def plot_clusters(data, labels, algorithm, centers=None):
     pca = PCA(n_components=2)
@@ -343,29 +343,6 @@ elif step == "Visualize Data":
         plot_dimension_reduction(data, target_column)
 
 
-        st.subheader("Choose Dataset for Prediction")
-
-        if all(key in st.session_state for key in ['X_pca', 'X_lda', 'X_mds', 'X_lle']):
-            dataset_choice = st.selectbox(
-                "Choose a dimensionally reduced dataset",
-                ["None", "PCA", "LDA", "MDS", "LLE"]
-            )
-
-            if dataset_choice == "PCA":
-                X = st.session_state.X_pca
-            elif dataset_choice == "LDA":
-                X = st.session_state.X_lda
-            elif dataset_choice == "MDS":
-                X = st.session_state.X_mds
-            elif dataset_choice == "LLE":
-                X = st.session_state.X_lle
-            else:
-                st.write("No dimension reduction applied.")
-                X = None
-
-        if X is not None:
-            st.subheader("Clustering Visualizations")
-
     else:
         st.info("Please complete the previous steps first.")
 
@@ -388,7 +365,7 @@ elif step == "Clustering and Prediction":
             n_clusters = st.number_input('Number of clusters', min_value=2, max_value=10, value=3)
             kmeans = KMeans(n_clusters=n_clusters)
             labels = kmeans.fit_predict(numeric_data)
-            st.write(f'Cluster centers: {kmeans.cluster_centers_}')
+            
             plot_clusters(numeric_data, labels, 'K-means', kmeans.cluster_centers_)
         elif clustering_algorithm == 'DB-SCAN':
             eps = st.number_input('Epsilon (eps)', min_value=0.1, max_value=10.0, value=0.5)
