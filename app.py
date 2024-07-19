@@ -13,6 +13,27 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import math
 from sklearn.linear_model import LinearRegression
+
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.express as px
+import matplotlib.pyplot as pltnear_model
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import plotly.express as pxleImputer
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+import matplotlib.pyplot as plt
+
+
 # Title of the application
 st.title('CSV File Analyzer')
 
@@ -218,8 +239,6 @@ def plot_dimension_reduction(data, target_column):
     else:
         st.error("Not enough numerical columns for dimension reduction.")
 
-
-
 # Function to plot clusters
 def plot_clusters(data, labels, algorithm, centers=None):
     pca = PCA(n_components=2)
@@ -410,6 +429,87 @@ elif step == "Clustering and Prediction":
             plt.ylabel('Predicted')
             plt.title('Actual vs Predicted Values')
             st.pyplot(plt)
+
+        if st.button('Logistic Regression'):
+             # Prepare the data
+
+            X = data.drop(columns=[target_column]).select_dtypes(include=['number']).dropna()
+            y = data[target_column].dropna()
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            model= LogisticRegression(max_iter=1000)
+            model.fit(X_train, y_train)
+            y_pred =model.predict(X_test)
+
+            # Evaluate the model
+            accuracy = accuracy_score(y_test, y_pred)
+            conf_matrix = confusion_matrix(y_test, y_pred)
+            class_report = classification_report(y_test, y_pred, output_dict=True)
+
+            st.write(f"### Accuracy: {accuracy:.2f}")
+            st.write("### Confusion Matrix")
+            st.write(conf_matrix)
+
+            st.write("### Classification Report")
+            st.write(pd.DataFrame(class_report).transpose())
+
+            # Visualize the confusion matrix
+            fig = px.imshow(conf_matrix, text_auto=True, aspect="auto", color_continuous_scale="Blues")
+            st.plotly_chart(fig)
+
+        if st.button('Random Forest'):
+             # Prepare the data
+
+            X = data.drop(columns=[target_column]).select_dtypes(include=['number']).dropna()
+            y = data[target_column].dropna()
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            model= RandomForestClassifier()
+            model.fit(X_train, y_train)
+            y_pred =model.predict(X_test)
+
+            # Evaluate the model
+            accuracy = accuracy_score(y_test, y_pred)
+            conf_matrix = confusion_matrix(y_test, y_pred)
+            class_report = classification_report(y_test, y_pred, output_dict=True)
+
+            st.write(f"### Accuracy: {accuracy:.2f}")
+            st.write("### Confusion Matrix")
+            st.write(conf_matrix)
+
+            st.write("### Classification Report")
+            st.write(pd.DataFrame(class_report).transpose())
+
+            # Visualize the confusion matrix
+            fig = px.imshow(conf_matrix, text_auto=True, aspect="auto", color_continuous_scale="Blues")
+            st.plotly_chart(fig)
+        if st.button('k-Nearest Neighbors (k-NN)'):
+             # Prepare the data
+
+            X = data.drop(columns=[target_column]).select_dtypes(include=['number']).dropna()
+            y = data[target_column].dropna()
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            model= KNeighborsClassifier()
+            model.fit(X_train, y_train)
+            y_pred =model.predict(X_test)
+
+            # Evaluate the model
+            accuracy = accuracy_score(y_test, y_pred)
+            conf_matrix = confusion_matrix(y_test, y_pred)
+            class_report = classification_report(y_test, y_pred, output_dict=True)
+
+            st.write(f"### Accuracy: {accuracy:.2f}")
+            st.write("### Confusion Matrix")
+            st.write(conf_matrix)
+
+            st.write("### Classification Report")
+            st.write(pd.DataFrame(class_report).transpose())
+
+            # Visualize the confusion matrix
+            fig = px.imshow(conf_matrix, text_auto=True, aspect="auto", color_continuous_scale="Blues")
+            st.plotly_chart(fig)
+
     else:
         st.info("Please upload and process a CSV file first.")
 
