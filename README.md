@@ -45,14 +45,11 @@ The project contains the following parts:
 - Scikit-learn
 - NumPy
 
-
-
-  
-**Installation**
-   Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/data-mining-project.git
-   cd data-mining-project```
+### Installation
+Clone the repository:
+```bash
+git clone https://github.com/yourusername/data-mining-project.git
+cd data-mining-project
 
 **Installation**
   python -m venv env
