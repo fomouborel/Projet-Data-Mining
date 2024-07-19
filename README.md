@@ -54,14 +54,14 @@ The project contains the following parts:
    git clone https://github.com/yourusername/data-mining-project.git
    cd data-mining-project```
 
-### Installation
+**Installation**
   python -m venv env
   source env/bin/activate  # On Windows use `env\Scripts\activate`
 
-### Install the required packages:
+**Install the required packages:**
    pip install -r requirements.txt
 
-### Usage
+**Usage**
    1.Run the Streamlit application: streamlit run streamlit_app.py
    2.Load your dataset in CSV format using the provided file uploader
    3.Follow the on-screen instructions to explore, clean, and visualize your data.
