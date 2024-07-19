@@ -35,3 +35,36 @@ The project contains the following parts:
    - Visualization of clusters: Creates 2D or 3D scatter plots to visualize the clusters. Data points are colored according to their cluster membership.
    - Cluster statistics: Calculates and displays basic statistics on clusters, such as the number of data points in each cluster, the center of each cluster (for K-Means), the density of each cluster (for DBSCAN), etc.
    - Similar evaluation for prediction tasks.
+
+### Requirements
+- Python 3.7 or higher
+- Streamlit
+- Pandas
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- NumPy
+
+### Installation
+   Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/data-mining-project.git
+   cd data-mining-project
+
+### Installation
+  python -m venv env
+  source env/bin/activate  # On Windows use `env\Scripts\activate`
+
+### Install the required packages:
+   pip install -r requirements.txt
+
+### Usage
+   1.Run the Streamlit application: streamlit run streamlit_app.py
+   2.Load your dataset in CSV format using the provided file uploader
+   3.Follow the on-screen instructions to explore, clean, and visualize your data.
+   4.Choose and apply clustering or prediction algorithms as needed.
+
+Acknowledgements
+
+    Special thanks to Issam Falih for their guidance and support.
+    Thanks to all the team members for their hard work and collaboration.
