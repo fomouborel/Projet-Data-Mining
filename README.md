@@ -45,6 +45,12 @@ The project contains the following parts:
 - Scikit-learn
 - NumPy
 
+
+### Acknowledgements
+
+    Special thanks to Issam Falih for their guidance and support.
+    Thanks to all the team members for their hard work and collaboration.
+  
 ### Installation
    Clone the repository:
    ```bash
@@ -64,7 +70,3 @@ The project contains the following parts:
    3.Follow the on-screen instructions to explore, clean, and visualize your data.
    4.Choose and apply clustering or prediction algorithms as needed.
 
-Acknowledgements
-
-    Special thanks to Issam Falih for their guidance and support.
-    Thanks to all the team members for their hard work and collaboration.
