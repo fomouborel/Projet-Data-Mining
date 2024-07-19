@@ -47,7 +47,7 @@ The project contains the following parts:
 
 ### Installation
 Clone the repository:
-```bash
+bash
 git clone https://github.com/yourusername/data-mining-project.git
 cd data-mining-project
 
