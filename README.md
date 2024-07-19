@@ -48,7 +48,7 @@ The project contains the following parts:
 ### Installation
 Clone the repository:
 bash
-git clone https://github.com/yourusername/data-mining-project.git
+git clone https://github.com/fomouborel/Projet-Data-Mining/tree/main
 cd data-mining-project
 
 **Installation**
